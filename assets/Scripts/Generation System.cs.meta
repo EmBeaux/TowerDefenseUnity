@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 1e142e5560c0d3846a4e22b07a0005ee
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - pathTile: {fileID: 2233731398180891349, guid: 38c828aaeeb41fb4b93cf4a138d289b0, type: 3}
+  - grassTile: {fileID: 5893398640473636415, guid: 5f14b93936df22949811bb1dac4fce27, type: 3}
+  - startTower: {fileID: 9178356130630116189, guid: 43212ee48cf840d429a6cb2991e93486, type: 3}
+  - endTower: {fileID: 1432605654957633668, guid: 4ae6812fc8a47c441a6198dfe6551491, type: 3}
+  - grid: {fileID: 1913215278729330512, guid: 0cba3bfac09127542a55f1a2913adfd3, type: 3}
+  - enemyWaypoint: {fileID: 6314821715821272826, guid: 1f162581e74044745ace25e504e5cab3, type: 3}
+  - navigation: {fileID: 6293328042961836796, guid: c5a41f331a67bf54fb3b921b82cd1948, type: 3}
+  - navigationComponent: {instanceID: 0}
+  - gridComponent: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -6,7 +6,6 @@ public class PlacementSystem : MonoBehaviour
 {
     [SerializeField]
     private GameObject cellIndicator;
-
     public Material cellIndicatorMaterial;
 
     [SerializeField]
@@ -14,6 +13,7 @@ public class PlacementSystem : MonoBehaviour
 
     [SerializeField]
     private Grid grid;
+    private Vector2Int gridSize;
 
     private Transform generationSystem;
     private GenerationSystem generationSystemComponent;
@@ -22,32 +22,26 @@ public class PlacementSystem : MonoBehaviour
     {
         generationSystem = GameObject.Find("Generation System").transform;
         generationSystemComponent = generationSystem.GetComponent<GenerationSystem>();
+        gridSize = generationSystemComponent.gridSize;
         InitializeIndicator();
     }
 
     private void Update() {
-        Vector3 mousePos = inputManager.GetSelectedMapPosition();
-        Vector3Int gridPos = grid.WorldToCell(mousePos);
-
-        Vector3 cellCenter = grid.GetCellCenterWorld(gridPos);
-        cellCenter.y = grid.transform.position.y + 0.55f;
-        cellIndicator.transform.position = cellCenter;
-
-        // Update the position of the cell indicator based on the actual cell the mouse is over
-        Vector2Int gridSize = generationSystemComponent.gridSize;
-        Vector2Int graphPos = GridToGraph(new Vector2Int(gridPos.x, gridPos.z), gridSize);
-        if (generationSystemComponent.pathDictionary.ContainsKey(graphPos))
-        {
-            cellIndicator.GetComponent<MeshRenderer>().material.color = Color.red;
-        }
-        else
-        {
-            cellIndicator.GetComponent<MeshRenderer>().material.color = Color.green;
-        }
-        cellIndicator.transform.position = grid.CellToWorld(gridPos);
-        cellIndicator.transform.position = new Vector3(cellIndicator.transform.position.x, cellCenter.y, cellIndicator.transform.position.z);
+        UpdateIndicator();
     }
 
+    private void UpdateIndicator()
+    {
+        Vector3Int gridPos = MouseToGrid();
+        Vector2Int mapPos = MouseToMap();
+        Vector3 gridCellCenter = MouseToGridCellCenter();
+
+        cellIndicator.GetComponent<MeshRenderer>().material.color = IsValidPosition(mapPos) ? Color.green : Color.red;
+        Vector3 cellIndicatorPos = grid.CellToWorld(gridPos);
+        cellIndicatorPos.y = gridCellCenter.y + 0.1f;
+        cellIndicator.transform.position = cellIndicatorPos;
+    }
+    
     private void InitializeIndicator()
     {
         // Calculate the position of the center of the grid cell where you want to draw the square
@@ -100,8 +94,35 @@ public class PlacementSystem : MonoBehaviour
         meshRenderer.material = cellIndicatorMaterial;
     }
 
-    private Vector2Int GridToGraph(Vector2Int gridPos, Vector2Int gridSize)
+    private Vector2Int GridToMap(Vector2Int gridPos)
     {
         return new Vector2Int(gridPos.x + ((gridSize.x - 1) / 2), gridPos.y + ((gridSize.y - 1) / 2));
+    }
+
+    private bool IsValidPosition(Vector2Int mapPos)
+    {
+        return !generationSystemComponent.pathDictionary.ContainsKey(mapPos);
+    }
+
+    private Vector3 MouseToGridCellCenter()
+    {
+        Vector3Int gridPos = MouseToGrid();
+        Vector3 cellCenter = grid.GetCellCenterWorld(gridPos);
+
+        return cellCenter;
+    }
+
+    private Vector2Int MouseToMap()
+    {
+        Vector3Int gridPos = MouseToGrid();
+        return GridToMap(new Vector2Int(gridPos.x, gridPos.z));
+    }
+
+    private Vector3Int MouseToGrid()
+    {
+        Vector3 mousePos = inputManager.GetSelectedMapPosition();
+        Vector3Int gridPos = grid.WorldToCell(mousePos);
+
+        return gridPos;
     }
 }

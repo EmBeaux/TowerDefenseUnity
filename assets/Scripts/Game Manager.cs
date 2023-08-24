@@ -3,10 +3,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public Transform enemyPrefab;
+    public Transform enemyPrefab, fastEnemyPrefab;
     public Transform spawnPoint;
     public Transform endPoint;
-    public List<EnemySpawner> enemySpawners;
+    public List<List<EnemySpawner>> enemySpawners;
+    public List<EnemySpawner> currentSpawnerBatch;
     public int totalWaves = 15;
     public int currentWave = 0;
     public EnemySpawner currentSpawner;
@@ -19,10 +20,11 @@ public class GameManager : MonoBehaviour
         gameStarted = true;
         float prevSpawnRate = 2f;
         int prevEnemyCount = 5;
-        enemySpawners = new List<EnemySpawner>();
+        enemySpawners = new List<List<EnemySpawner>>();
         for (int i = 0; i < totalWaves; i++)
         {
-            enemySpawners.Add(
+            List<EnemySpawner> currentSpawnerBatch = new List<EnemySpawner>();
+            currentSpawnerBatch.Add(
                 new EnemySpawner(
                     prevSpawnRate += .5f,
                     enemyPrefab,
@@ -30,6 +32,21 @@ public class GameManager : MonoBehaviour
                     spawnPoint
                 )
             );
+
+            if (i > 4 && (i + 1) % 2 == 0)
+            {
+                int newEnemyCount = prevEnemyCount / 2;
+                currentSpawnerBatch.Add(
+                    new EnemySpawner(
+                        prevSpawnRate * 2f,
+                        fastEnemyPrefab,
+                        newEnemyCount,
+                        spawnPoint
+                    )
+                );
+            }
+
+            enemySpawners.Add(currentSpawnerBatch);
         }
     }
     private void Update()
@@ -37,14 +54,20 @@ public class GameManager : MonoBehaviour
         if (gameStarted && Input.GetKeyDown(KeyCode.Space) && FindObjectsOfType<Enemy>().Length == 0)
         {
             Debug.Log("Current wave " + currentWave);
-            currentSpawner = enemySpawners[currentWave];
-            currentSpawner.StartGame();
+            currentSpawnerBatch = enemySpawners[currentWave];
+            foreach(EnemySpawner spawner in currentSpawnerBatch)
+            {
+                spawner.StartGame();
+            }
             currentWave++;
         }
 
-        if (currentSpawner != null)
+        if (currentSpawnerBatch != null)
         {
-            currentSpawner.Tick();
+            foreach (EnemySpawner spawner in currentSpawnerBatch)
+            {
+                spawner.Tick();
+            }
         }
     }
 }

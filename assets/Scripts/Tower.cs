@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+// using UnityEngine.EventSystems;
 public class Tower : MonoBehaviour
 {
     public Transform bullet;
@@ -16,6 +16,12 @@ public class Tower : MonoBehaviour
     private void Start()
     {
         InvokeRepeating("GetClosestEnemy", 0f, 1f);
+    }
+
+
+    public void OnMouseDown()
+    {
+        Debug.Log("Click");
     }
 
     private void OnDrawGizmos()

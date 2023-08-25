@@ -1,32 +1,41 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemySpawner
-{
-    public Transform enemyPrefab;
-    public Transform spawnPoint;
+public struct WaveDetails {
     public float spawnRate;
     public int enemyCount;
+    public Transform spawnPoint;
+    public Transform enemyPrefab;
+
+    public WaveDetails(float spawnRate, int enemyCount, Transform spawnPoint, Transform enemyPrefab)
+    {
+        this.spawnRate = spawnRate;
+        this.enemyCount = enemyCount;
+        this.spawnPoint = spawnPoint;
+        this.enemyPrefab = enemyPrefab;
+    }
+}
+
+public class EnemySpawner
+{
+    public WaveDetails waveDetails;
     private float spawnDelay = 2f;
     private bool gameStart = false;
 
-    public EnemySpawner(float spawnRate, Transform enemyPrefab, int enemyCount, Transform spawnPoint)
+    public EnemySpawner(WaveDetails waveDetails)
     {
-        this.spawnRate = spawnRate;
-        this.enemyPrefab = enemyPrefab;
-        this.spawnPoint = spawnPoint;
-        this.enemyCount = enemyCount;
+        this.waveDetails = waveDetails;
     }
 
     public void Tick()
     {
         if (gameStart)
         {
-            if (spawnDelay <= 0f && enemyCount > 0)
+            if (spawnDelay <= 0f && waveDetails.enemyCount > 0)
             {
                 SpawnEnemy();
-                spawnDelay = 1f / spawnRate;
-                enemyCount--;
+                spawnDelay = 1f / waveDetails.spawnRate;
+                waveDetails.enemyCount--;
             }
 
             spawnDelay -= Time.deltaTime;
@@ -40,7 +49,11 @@ public class EnemySpawner
 
     private void SpawnEnemy()
     {
-        Transform enemy = GameObject.Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
-        enemy.parent = spawnPoint;
+        Transform enemy = GameObject.Instantiate(
+            waveDetails.enemyPrefab,
+            waveDetails.spawnPoint.position,
+            waveDetails.spawnPoint.rotation
+        );
+        enemy.parent = waveDetails.spawnPoint;
     }
 }

@@ -17,23 +17,39 @@ public class PlacementSystem : MonoBehaviour
 
     private Transform generationSystem;
     private GenerationSystem generationSystemComponent;
+    private Transform buildingSystem;
+
+    private BuildingSystem buildingSystemComponent;
 
     private void Awake()
     {
         generationSystem = GameObject.Find("Generation System").transform;
         generationSystemComponent = generationSystem.GetComponent<GenerationSystem>();
+        buildingSystem = GameObject.Find("Building System").transform;
+        buildingSystemComponent = buildingSystem.GetComponent<BuildingSystem>();
         gridSize = generationSystemComponent.gridSize;
         InitializeIndicator();
     }
 
     private void Update() {
         UpdateIndicator();
+        if (Input.GetMouseButtonDown(0) && IsMouseWithinGrid(MouseToMap()))
+        {
+            OnMouseDown();
+        }
     }
 
     private void UpdateIndicator()
     {
         Vector3Int gridPos = MouseToGrid();
         Vector2Int mapPos = MouseToMap();
+        if (!IsMouseWithinGrid(mapPos) || buildingSystemComponent.GetTowerToBuild() == null)
+        {
+            cellIndicator.SetActive(false);  // Hide the indicator when out of grid bounds
+            return;
+        }
+
+        cellIndicator.SetActive(true);
         Vector3 gridCellCenter = MouseToGridCellCenter();
 
         cellIndicator.GetComponent<MeshRenderer>().material.color = IsValidPosition(mapPos) ? Color.green : Color.red;
@@ -121,8 +137,28 @@ public class PlacementSystem : MonoBehaviour
     private Vector3Int MouseToGrid()
     {
         Vector3 mousePos = inputManager.GetSelectedMapPosition();
+        if (gridSize.x % 2 == 0) mousePos.x += grid.cellSize.x / 2;
+        if (gridSize.y % 2 == 0) mousePos.z += grid.cellSize.z / 2;
         Vector3Int gridPos = grid.WorldToCell(mousePos);
 
         return gridPos;
+    }
+
+    private bool IsMouseWithinGrid(Vector2Int mapPos)
+    {
+        if (mapPos.x < 0 || mapPos.x >= gridSize.x || mapPos.y < 0 || mapPos.y >= gridSize.y)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public void OnMouseDown()
+    {
+        Vector2Int mapPos = MouseToMap();
+        if (IsValidPosition(mapPos) && buildingSystemComponent.GetTowerToBuild() != null) {
+            Instantiate(buildingSystemComponent.GetTowerToBuild(), MouseToGridCellCenter(), Quaternion.identity);
+            buildingSystemComponent.SetTowerToBuild(null);
+        }
     }
 }

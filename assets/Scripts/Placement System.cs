@@ -15,19 +15,15 @@ public class PlacementSystem : MonoBehaviour
     private Grid grid;
     private Vector2Int gridSize;
 
-    private Transform generationSystem;
-    private GenerationSystem generationSystemComponent;
-    private Transform buildingSystem;
+    private GenerationSystem generationSystem;
 
-    private BuildingSystem buildingSystemComponent;
+    private BuildingSystem buildingSystem;
 
-    private void Awake()
+    private void Start()
     {
-        generationSystem = GameObject.Find("Generation System").transform;
-        generationSystemComponent = generationSystem.GetComponent<GenerationSystem>();
-        buildingSystem = GameObject.Find("Building System").transform;
-        buildingSystemComponent = buildingSystem.GetComponent<BuildingSystem>();
-        gridSize = generationSystemComponent.gridSize;
+        generationSystem = GenerationSystem.instance;
+        buildingSystem = BuildingSystem.instance;
+        gridSize = generationSystem.gridSize;
         InitializeIndicator();
     }
 
@@ -43,7 +39,7 @@ public class PlacementSystem : MonoBehaviour
     {
         Vector3Int gridPos = MouseToGrid();
         Vector2Int mapPos = MouseToMap();
-        if (!IsMouseWithinGrid(mapPos) || buildingSystemComponent.GetTowerToBuild() == null)
+        if (!IsMouseWithinGrid(mapPos) || buildingSystem.GetTowerToBuild() == null)
         {
             cellIndicator.SetActive(false);  // Hide the indicator when out of grid bounds
             return;
@@ -117,7 +113,7 @@ public class PlacementSystem : MonoBehaviour
 
     private bool IsValidPosition(Vector2Int mapPos)
     {
-        return !generationSystemComponent.pathDictionary.ContainsKey(mapPos);
+        return !generationSystem.pathDictionary.ContainsKey(mapPos);
     }
 
     private Vector3 MouseToGridCellCenter()
@@ -156,9 +152,9 @@ public class PlacementSystem : MonoBehaviour
     public void OnMouseDown()
     {
         Vector2Int mapPos = MouseToMap();
-        if (IsValidPosition(mapPos) && buildingSystemComponent.GetTowerToBuild() != null) {
-            Instantiate(buildingSystemComponent.GetTowerToBuild(), MouseToGridCellCenter(), Quaternion.identity);
-            buildingSystemComponent.SetTowerToBuild(null);
+        if (IsValidPosition(mapPos) && buildingSystem.GetTowerToBuild() != null) {
+            Instantiate(buildingSystem.GetTowerToBuild(), MouseToGridCellCenter(), Quaternion.identity);
+            buildingSystem.SetTowerToBuild(null);
         }
     }
 }

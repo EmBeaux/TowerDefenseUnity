@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     public List<EnemySpawner> currentSpawnerBatch;
     public int totalWaves = 15, currentWave = 0;
     private bool gameStarted = false;
+    private InfoManager infoManager;
 
     public void StartGameManager(Transform inputSpawnPoint, Transform inputEndPoint)
     {
@@ -61,13 +62,14 @@ public class GameManager : MonoBehaviour
     {
         if (gameStarted && Input.GetKeyDown(KeyCode.Space) && FindObjectsOfType<Enemy>().Length == 0)
         {
-            Debug.Log("Current wave " + currentWave);
+            Debug.Log("Current wave " + (currentWave + 1));
             currentSpawnerBatch = enemySpawners[currentWave];
             foreach (EnemySpawner spawner in currentSpawnerBatch)
             {
                 spawner.StartGame();
             }
             currentWave++;
+            infoManager.SetLevel(currentWave);
         }
 
         if (currentSpawnerBatch != null)
@@ -77,5 +79,10 @@ public class GameManager : MonoBehaviour
                 spawner.Tick();
             }
         }
+    }
+
+    private void Start()
+    {
+        infoManager = InfoManager.instance;
     }
 }

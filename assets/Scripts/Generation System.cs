@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class GenerationSystem : MonoBehaviour
 {
+    public static GenerationSystem instance;
     public Transform pathTile;
     public Transform grassTile;
     public Transform startTower;
@@ -28,6 +29,12 @@ public class GenerationSystem : MonoBehaviour
 
     private void Awake()
     {
+        if (instance != null)
+        {
+            Debug.LogError("More than one GenerationSystem in scene!");
+            return;
+        }
+        instance = this;
         gridComponent = grid.GetComponent<Grid>();
         navigationComponent = navigation.GetComponent<Navigation>();
         gameManagerComponent = gameManager.GetComponent<GameManager>();

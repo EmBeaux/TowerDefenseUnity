@@ -9,6 +9,12 @@ public class Bullet : MonoBehaviour
     public Transform target;
     public Rigidbody bulletRB;
     public float lifetime = 5f;
+    private InfoManager infoManager;
+
+    private void Start()
+    {
+        infoManager = InfoManager.instance;
+    }
 
     private void Awake()
     {
@@ -49,6 +55,8 @@ public class Bullet : MonoBehaviour
             // Destroy the bullet when it collides with an enemy
             Destroy(gameObject);
             Destroy(other.gameObject);
+            infoManager.AddScore(10);
+            infoManager.AddCoins(1);
         }
     }
 }

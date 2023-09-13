@@ -4,29 +4,27 @@ using UnityEngine;
 
 public class Shop : MonoBehaviour
 {
-    public Transform towerOne;
-    public Transform towerTwo;
-    public Transform towerThree;
-    private Transform buildingSystem;
-    private BuildingSystem buildingSystemComponent;
+    public GameObject towerOne;
+    public GameObject towerTwo;
+    public GameObject towerThree;
+    private BuildingSystem buildingSystem;
 
-    private void Awake()
+    private void Start()
     {
-        buildingSystem = GameObject.Find("Building System").transform;
-        buildingSystemComponent = buildingSystem.GetComponent<BuildingSystem>();
+        buildingSystem = BuildingSystem.instance;
     }
     public void SetTowerOne()
     {
-        buildingSystemComponent.SetTowerToBuild(towerOne);
+        buildingSystem.SetTowerToBuild(towerOne);
     }
 
     public void SetTowerTwo()
     {
-        buildingSystemComponent.SetTowerToBuild(towerTwo);
+        buildingSystem.SetTowerToBuild(towerTwo);
     }
 
     public void SetTowerThree()
     {
-        buildingSystemComponent.SetTowerToBuild(towerThree);
+        buildingSystem.SetTowerToBuild(towerThree);
     }
 }

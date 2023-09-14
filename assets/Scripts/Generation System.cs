@@ -6,19 +6,10 @@ using UnityEngine;
 public class GenerationSystem : MonoBehaviour
 {
     public static GenerationSystem instance;
-    public Transform pathTile;
-    public Transform grassTile;
-    public Transform startTower;
-    public Transform endTower;
-    public Transform grid;
-    public Transform enemyWaypoint;
-    public Transform navigation;
-    public Transform gameManager;
+    public Transform pathTile, grassTile, startTower, endTower, grid, enemyWaypoint, navigation, gameManager, startTowerTransform, endTowerTransform;
     public GameManager gameManagerComponent;
     public Navigation navigationComponent;
     public Grid gridComponent;
-    public Transform startTowerTransform;
-    public Transform endTowerTransform;
     public Vector3 gridCenter;
     public Vector2Int gridSize = new Vector2Int(15, 15);
     public Vector2Int startTile = new Vector2Int(0, 0);
@@ -86,11 +77,15 @@ public class GenerationSystem : MonoBehaviour
                 newDirection = randomDirection;
             }
 
-            Instantiate(enemyWaypoint, CalculateCellPosition(currentTile.x, currentTile.y), Quaternion.identity, navigation);
+            Vector3 waypointPos = CalculateCellPosition(currentTile.x, currentTile.y);
+            waypointPos = new Vector3(waypointPos.x, waypointPos.y + gridComponent.cellSize.y * 2, waypointPos.z);
+            Instantiate(enemyWaypoint, waypointPos, Quaternion.identity, navigation);
             if (!pathDictionary.ContainsKey(currentTile))
             {
                 if (!pathDictionary.ContainsKey(currentTile))
                 {
+                    GameObject grassTile = grid.GetChild(currentTile.x * gridSize.y + currentTile.y).gameObject;
+                    Destroy(grassTile);
                     pathDictionary.Add(currentTile, 1);
                     Instantiate(pathTile, CalculateCellPosition(currentTile.x, currentTile.y), Quaternion.identity, grid);
                 } else {

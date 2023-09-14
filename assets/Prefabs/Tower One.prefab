@@ -58,14 +58,14 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 100010, guid: d148bd46a5a4c4e4d96a7c02442100fc, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -5651485084132737907}
+      addedObject: {fileID: 7336970838848435784}
   m_SourcePrefab: {fileID: 100100000, guid: d148bd46a5a4c4e4d96a7c02442100fc, type: 3}
 --- !u!1 &660089874382340335 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100010, guid: d148bd46a5a4c4e4d96a7c02442100fc, type: 3}
   m_PrefabInstance: {fileID: 660089874382440005}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-5651485084132737907
+--- !u!114 &7336970838848435784
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -74,11 +74,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 660089874382340335}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dc7fb9ccca38fa4c8b3252f7db658a3, type: 3}
+  m_Script: {fileID: 11500000, guid: cf1cc2faf74f0464c95e41f739258e55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 3814281919487251883, guid: c8b255a02e93ec34bb6a5e2097d63cf0, type: 3}
   range: 80
-  fireRate: 1
+  fireRate: 10
   bulletDelay: 0
+  cost: 1
+  target: {fileID: 0}
+  enemies: []
   drawRangeInGame: 1

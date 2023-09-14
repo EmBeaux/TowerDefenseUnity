@@ -8,29 +8,31 @@ public class Tower : MonoBehaviour
     public float range = 80f;
     public float fireRate = 1f;
     public float bulletDelay = 2f;
-    private Transform target;
-    private Enemy[] enemies;
+    public int cost = 1;
+    public Transform target;
+    public Enemy[] enemies;
     [HideInInspector]
     public bool drawRangeInGame = true;
+    private Transform activeCannon;
 
-    private void Start()
+    public void Start()
     {
-        InvokeRepeating("GetClosestEnemy", 0f, 1f);
+        activeCannon = transform.Find("Head");
+        GetClosestEnemy();
     }
-
 
     public void OnMouseDown()
     {
         Debug.Log("Click");
     }
 
-    private void OnDrawGizmos()
+    public void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, range);
     }
 
-    private void GetClosestEnemy()
+    public void GetClosestEnemy()
     {
         Transform bestTarget = null;
         float closestDistanceSqr = Mathf.Pow(range, 2);
@@ -50,17 +52,18 @@ public class Tower : MonoBehaviour
         target = bestTarget;
     }
 
-    private void Update()
+    public void Update()
     {
+        GetClosestEnemy();
         if (target == null)
         {
             return;
         }
 
-        // Vector3 dir = target.position - transform.position;
-        // Quaternion lookRotation = Quaternion.LookRotation(dir);
-        // Vector3 rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * 5f).eulerAngles;
-        // transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+        Vector3 dir = target.position - transform.position;
+        Quaternion lookRotation = Quaternion.LookRotation(dir);
+        Vector3 rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * 5f).eulerAngles;
+        transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
 
         if (bulletDelay <= 0f)
         {
@@ -70,17 +73,13 @@ public class Tower : MonoBehaviour
         bulletDelay -= Time.deltaTime;
     }
 
-    private void Shoot()
+    public virtual void Shoot()
     {
-        Vector3 bulletSpawnPos = transform.position + transform.forward * 2f;
-        Vector3 bulletPos = new Vector3(bulletSpawnPos.x, bulletSpawnPos.y, bulletSpawnPos.z);
-        Transform bulletGO = Instantiate(bullet, bulletPos, transform.rotation);
-        // bulletGO.parent = transform;
+        Transform bulletGO = Instantiate(bullet, activeCannon.position, activeCannon.rotation);
         Bullet bulletScript = bulletGO.GetComponent<Bullet>();
 
         if (bulletScript != null)
         {
-            Debug.Log("boutta seek");
             bulletScript.Seek(target);
         }
     }

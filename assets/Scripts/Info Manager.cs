@@ -12,7 +12,7 @@ public class InfoManager : MonoBehaviour
 
     public int score = 0;
     public int level = 1;
-    public int coins = 0;
+    public int coins = 3;
 
     private void Awake()
     {
@@ -28,7 +28,7 @@ public class InfoManager : MonoBehaviour
     {
         scoreText.text = "Score: " + score;
         levelText.text = "Level: " + level;
-        coinsText.text = "Coins: " + coins;
+        coinsText.text = coins.ToString();
     }
 
     public void AddScore(int score)
@@ -46,6 +46,12 @@ public class InfoManager : MonoBehaviour
     public void AddCoins(int coins)
     {
         this.coins += coins;
-        coinsText.text = "Coins: " + this.coins;
+        coinsText.text = this.coins.ToString();
+    }
+
+    public void SubtractCoins(int coins)
+    {
+        this.coins -= coins;
+        coinsText.text = this.coins.ToString();
     }
 }

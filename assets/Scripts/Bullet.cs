@@ -10,10 +10,13 @@ public class Bullet : MonoBehaviour
     public Rigidbody bulletRB;
     public float lifetime = 5f;
     private InfoManager infoManager;
+    private InputManager inputManager;
+    private PlacementSystem placementSystem;
 
     private void Start()
     {
         infoManager = InfoManager.instance;
+        placementSystem = PlacementSystem.instance;
     }
 
     private void Awake()
@@ -46,6 +49,14 @@ public class Bullet : MonoBehaviour
     //     Vector3 dir = target.position - transform.position;
     //     transform.Translate(launchDir * speed * Time.deltaTime, Space.World);
     // }
+    private void Update()
+    {
+        Vector2Int mapPos = placementSystem.MouseToMap(transform.position);
+        if(!placementSystem.IsWithinGrid(mapPos))
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -57,6 +68,11 @@ public class Bullet : MonoBehaviour
             Destroy(other.gameObject);
             infoManager.AddScore(10);
             infoManager.AddCoins(1);
+        }
+
+        if (other.CompareTag("out_of_bounds"))
+        {
+            Destroy(gameObject);
         }
     }
 }

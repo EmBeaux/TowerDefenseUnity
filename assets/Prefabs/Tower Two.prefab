@@ -81,4 +81,5 @@ MonoBehaviour:
   range: 80
   fireRate: 1
   bulletDelay: 0
+  cost: 3
   drawRangeInGame: 1

@@ -21,6 +21,7 @@ public class EnemySpawner
     public WaveDetails waveDetails;
     private float spawnDelay = 2f;
     private bool gameStart = false;
+    private bool isFirstTick = true;
 
     public EnemySpawner(WaveDetails waveDetails)
     {
@@ -31,11 +32,12 @@ public class EnemySpawner
     {
         if (gameStart)
         {
-            if (spawnDelay <= 0f && waveDetails.enemyCount > 0)
+            if (isFirstTick || spawnDelay <= 0f && waveDetails.enemyCount > 0)
             {
                 SpawnEnemy();
                 spawnDelay = 1f / waveDetails.spawnRate;
                 waveDetails.enemyCount--;
+                isFirstTick = false;
             }
 
             spawnDelay -= Time.deltaTime;

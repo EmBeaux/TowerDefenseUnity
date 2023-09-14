@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour
 {
+    public static PlacementSystem instance;
     [SerializeField]
     private GameObject cellIndicator;
     public Material cellIndicatorMaterial;
@@ -19,6 +20,16 @@ public class PlacementSystem : MonoBehaviour
 
     private BuildingSystem buildingSystem;
 
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogError("More than one PlacementSystem in scene!");
+            return;
+        }
+        instance = this;
+    }
+
     private void Start()
     {
         generationSystem = GenerationSystem.instance;
@@ -29,7 +40,7 @@ public class PlacementSystem : MonoBehaviour
 
     private void Update() {
         UpdateIndicator();
-        if (Input.GetMouseButtonDown(0) && IsMouseWithinGrid(MouseToMap()))
+        if (Input.GetMouseButtonDown(0) && IsWithinGrid(MouseToMap()))
         {
             OnMouseDown();
         }
@@ -39,18 +50,18 @@ public class PlacementSystem : MonoBehaviour
     {
         Vector3Int gridPos = MouseToGrid();
         Vector2Int mapPos = MouseToMap();
-        if (!IsMouseWithinGrid(mapPos) || buildingSystem.GetTowerToBuild() == null)
+        if (!IsWithinGrid(mapPos) || buildingSystem.GetTowerToBuild() == null)
         {
             cellIndicator.SetActive(false);  // Hide the indicator when out of grid bounds
             return;
         }
 
         cellIndicator.SetActive(true);
-        Vector3 gridCellCenter = MouseToGridCellCenter();
-
         cellIndicator.GetComponent<MeshRenderer>().material.color = IsValidPosition(mapPos) ? Color.green : Color.red;
+        
+        Vector3 gridCellCenter = MouseToGridCellCenter();
         Vector3 cellIndicatorPos = grid.CellToWorld(gridPos);
-        cellIndicatorPos.y = gridCellCenter.y + 0.1f;
+        cellIndicatorPos.y = 3.8f;
         cellIndicator.transform.position = cellIndicatorPos;
     }
     
@@ -124,15 +135,23 @@ public class PlacementSystem : MonoBehaviour
         return cellCenter;
     }
 
-    private Vector2Int MouseToMap()
+    public Vector2Int MouseToMap(Vector3? optional = null)
     {
         Vector3Int gridPos = MouseToGrid();
+        if (optional != null)
+        {
+            gridPos = MouseToGrid((Vector3)optional);
+        }
         return GridToMap(new Vector2Int(gridPos.x, gridPos.z));
     }
 
-    private Vector3Int MouseToGrid()
+    private Vector3Int MouseToGrid(Vector3? optional = null)
     {
         Vector3 mousePos = inputManager.GetSelectedMapPosition();
+        if (optional != null)
+        {
+            mousePos = (Vector3)optional;
+        }
         if (gridSize.x % 2 == 0) mousePos.x += grid.cellSize.x / 2;
         if (gridSize.y % 2 == 0) mousePos.z += grid.cellSize.z / 2;
         Vector3Int gridPos = grid.WorldToCell(mousePos);
@@ -140,7 +159,7 @@ public class PlacementSystem : MonoBehaviour
         return gridPos;
     }
 
-    private bool IsMouseWithinGrid(Vector2Int mapPos)
+    public bool IsWithinGrid(Vector2Int mapPos)
     {
         if (mapPos.x < 0 || mapPos.x >= gridSize.x || mapPos.y < 0 || mapPos.y >= gridSize.y)
         {
